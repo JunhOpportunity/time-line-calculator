@@ -1,33 +1,37 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import styled from "styled-components";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [inputTime, setInputTime] = useState('');
-  const [timeDifference, setTimeDifference] = useState('');
-  const [copySuccess, setCopySuccess] = useState('');
+  const [inputTime, setInputTime] = useState("");
+  const [timeDifference, setTimeDifference] = useState("");
 
   const parseDateString = (dateString) => {
-    const dateTimeParts = dateString.split(' ');
-    const dateParts = dateTimeParts[0].split('-');
-    const timeParts = dateTimeParts[1].split(':');
-    
+    const dateTimeParts = dateString.split(" ");
+    const dateParts = dateTimeParts[0].split("-");
+    const timeParts = dateTimeParts[1].split(":");
+
     return new Date(
-      dateParts[0], // year
-      dateParts[1] - 1, // month (0-based index)
-      dateParts[2], // day
-      timeParts[0], // hour
-      timeParts[1], // minute
-      timeParts[2] // second
+      dateParts[0],
+      dateParts[1] - 1,
+      dateParts[2],
+      timeParts[0],
+      timeParts[1],
+      timeParts[2]
     );
   };
 
   const calculateTimeDifference = () => {
+    if (inputTime.trim() === "") {
+      return alert("시간을 입력해주세요.");
+    }
     const inputDate = parseDateString(inputTime);
     const currentDate = new Date();
 
     if (isNaN(inputDate.getTime())) {
-      setTimeDifference('Invalid Date');
-      setCopySuccess('');
+      setTimeDifference("Invalid Date");
       return;
     }
 
@@ -40,32 +44,96 @@ function App() {
     const minutes = differenceInMinutes % 60;
     const hours = differenceInHours % 24;
 
-    const formattedTimeDifference = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    const formattedTimeDifference = `${String(hours).padStart(2, "0")}:${String(
+      minutes
+    ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
     setTimeDifference(formattedTimeDifference);
 
-    // 결과값을 클립보드에 복사
-    navigator.clipboard.writeText(formattedTimeDifference).then(() => {
-      setCopySuccess('결과값이 클립보드에 복사되었습니다.');
-    }).catch((error) => {
-      console.error('복사 실패:', error);
-      setCopySuccess('복사에 실패했습니다.');
-    });
+    navigator.clipboard
+      .writeText(formattedTimeDifference)
+      .then(() => {
+        toast.success("복사 완료!");
+      })
+      .catch((error) => {
+        toast.success("복사 실패..");
+      });
   };
 
   return (
     <div className="App">
-      <h1>시간 차이 계산기</h1>
-      <input
-        type="text"
-        placeholder="0000-00-00 00:00:00"
-        value={inputTime}
-        onChange={(e) => setInputTime(e.target.value)}
+      <ToastContainer
+        autoClose={10}
+        position="bottom-center"
+        pauseOnHover={false}
+        theme="light"
       />
-      <button onClick={calculateTimeDifference}>계산하기</button>
-      <p>시간 차이: {timeDifference}</p>
-      <p>{copySuccess}</p>
+      <h1 style={{ color: "#4279ff" }}>아프리카 업타임 계산기</h1>
+      <InputContainer>
+        <StyledInput
+          type="text"
+          placeholder="0000-00-00 00:00:00"
+          value={inputTime}
+          onChange={(e) => setInputTime(e.target.value)}
+        />
+        <ButtonContainer onClick={calculateTimeDifference}>
+          입력
+        </ButtonContainer>
+      </InputContainer>
+      <h4 style={{ color: "#4279ff" }}>업타임 : {timeDifference ? timeDifference : "00:00:00"}</h4>
     </div>
   );
 }
+
+const StyledInput = styled.input`
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 2px solid #4279ff;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-size: 16px;
+  color: #333;
+  height: 50px;
+
+  &:focus {
+    outline: none;
+    border-color: #2851a3;
+    box-shadow: 0 0 10px rgba(66, 121, 255, 0.2);
+  }
+
+  &::placeholder {
+    color: #bbb;
+  }
+`;
+
+const InputContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+`;
+
+const ButtonContainer = styled.button`
+  border: none;
+  border-radius: 10px;
+  background-color: #4279ff;
+  color: white;
+  height: 50px;
+  width: 100px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: bold;
+  font-size: 20px;
+  transition: background-color 0.5s, transform 0.2s;
+
+  &:hover {
+    background-color: #2851a3;
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+`;
 
 export default App;
