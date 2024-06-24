@@ -27,7 +27,8 @@ function App() {
     if (inputTime.trim() === "") {
       return alert("시간을 입력해주세요.");
     }
-    const inputDate = parseDateString(inputTime);
+    console.log(inputTime)
+    const inputDate = parseDateString(inputTime.trim());
     const currentDate = new Date();
 
     if (isNaN(inputDate.getTime())) {
@@ -80,6 +81,13 @@ function App() {
         </ButtonContainer>
       </InputContainer>
       <h4 style={{ color: "#4279ff" }}>업타임 : {timeDifference ? timeDifference : "00:00:00"}</h4>
+      <ExampleContainer>
+        <h3>사용 방법</h3>
+        <h4>1. 아프리카 '방송시작시간'을 복사해 붙여넣기 해주세요.</h4>
+        <img src="/example.png" alt="예시"/>
+        <h4>2. 입력 버튼을 눌러 업타임을 계산합니다.</h4>
+        <h4>3. 계산된 업타임이 복사됩니다.</h4>
+      </ExampleContainer>
     </div>
   );
 }
@@ -134,6 +142,10 @@ const ButtonContainer = styled.button`
   &:active {
     transform: scale(0.9);
   }
+`;
+
+const ExampleContainer = styled.div`
+
 `;
 
 export default App;
